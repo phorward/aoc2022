@@ -1,0 +1,28 @@
+begin {
+	elfs = 0
+	max = 0
+	who = null
+}
+
+(Int '\n')+ {
+	l = list($1)
+
+	sum = 0  # fixme: a sum($1) should be possible
+	loop l {
+		sum += l.pop()
+	}
+
+	if sum > max {
+		max = sum
+		who = elfs
+	}
+
+
+	elfs++
+	accept  # fixme: avoid return any value (should be default in main)
+}
+
+end {
+	#print(elfs "elfs in total evaluated")
+	print("Elf No." who + 1 "carries" max "calories")
+}
