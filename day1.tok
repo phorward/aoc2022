@@ -22,7 +22,6 @@ sort : @l {
 				tmp = l[i]
 			}
 		}
-		print("--")  # fixme: when this is missing, the loop runs endless?
 	}
 }
 
