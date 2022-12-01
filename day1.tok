@@ -1,28 +1,43 @@
-begin {
-	elfs = 0
-	max = 0
-	who = null
-}
+# fixme: such a function must be built-in
+sum : @l {
+	l = list(l)
+	sum = 0
 
-(Int '\n')+ {
-	l = list($1)
-
-	sum = 0  # fixme: a sum($1) should be possible
 	loop l {
 		sum += l.pop()
 	}
 
-	if sum > max {
-		max = sum
-		who = elfs
+	sum
+}
+
+#fixme: such a function must be built-in
+sort : @l {
+	for i = 0; i < l.len; i++ {
+		tmp = l[i]
+
+		for j = i + 1; j < l.len; j++ {
+			if tmp < l[j] {
+				l[i] = l[j]
+				l[j] = tmp
+				tmp = l[i]
+			}
+		}
+		print("--")  # fixme: when this is missing, the loop runs endless?
 	}
+}
 
+begin {
+	elfs = ()
+}
 
-	elfs++
+(Int '\n')+ {
+	elfs.push(sum($1))
 	accept  # fixme: avoid return any value (should be default in main)
 }
 
 end {
-	#print(elfs "elfs in total evaluated")
-	print("Elf No." who + 1 "carries" max "calories")
+	print(elfs.len "elfs in total evaluated")
+	sort(elfs)
+	print("The 3 topmost elfs are carrying"
+			sum((elfs[0],elfs[1],elfs[2])) "in total")
 }
