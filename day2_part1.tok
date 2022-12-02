@@ -1,0 +1,31 @@
+Opponent : {
+    'A' 1
+    'B' 2
+    'C' 3
+}
+
+Player : {
+    'X' 1
+    'Y' 2
+    'Z' 3
+}
+
+o => Opponent _ p => Player {
+    res = $o - $p  # either its -1 or 2 (rock beats scissor)
+    if res == -1 || res == 2 {
+        # win
+        score += $p + 6
+    }
+    else if $o == $p {
+        # draw
+        score += $p + 3
+    }
+    else {
+        # loose
+        score += $p
+    }
+
+    accept
+}
+
+end print(score)
