@@ -1,0 +1,51 @@
+lowera : ord("a")
+uppera : ord("A")
+
+# fixme: str_contains() function required
+str_contains : @s, ch {
+    for i = 0; i < s.len; i++ {
+        if s[i] == ch {
+            return true
+        }
+    }
+
+    false
+}
+
+begin {
+    total = 0
+}
+
+[a-zA-Z]+  {
+    half = $1.len / 2
+    part1 = $1.substr(0, half)
+    part2 = $1.substr(half)
+
+    #print("---", part1, part2)
+
+    found = ""
+
+    for i = 0; i < part1.len; i++ {
+        #if str_contains(found, (ch = part1[i]))
+        #    continue  # bug: impossible, does not increase i
+
+        if !str_contains(found, (ch = part1[i])) {
+            found += ch
+
+            if str_contains(part2, ch) {
+                ch = ord(ch)
+
+                if ch >= lowera {
+                    ch = ch - lowera + 1
+                }
+                else {
+                    ch = ch - uppera + 27
+                }
+
+                total += ch
+            }
+        }
+    }
+}
+
+end print(total)

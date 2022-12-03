@@ -1,0 +1,46 @@
+lowera : ord("a")
+uppera : ord("A")
+
+# fixme: str_contains() function required
+str_contains : @s, ch {
+    for i = 0; i < s.len; i++ {
+        if s[i] == ch {
+            return true
+        }
+    }
+
+    false
+}
+
+begin {
+    total = 0
+    group = ()
+}
+
+[a-zA-Z]+  {
+    group += $1
+    if group.len == 3 {
+        for i = 0; i < group[0].len; i++ {
+            ch = group[0][i]
+            if str_contains(group[1], ch) && str_contains(group[2], ch) {
+                ch = ord(ch)
+
+                if ch >= lowera {
+                    ch = ch - lowera + 1
+                }
+                else {
+                    ch = ch - uppera + 27
+                }
+
+                total += ch
+                break
+            }
+        }
+
+        group = ()
+    }
+
+    accept # fixme: shall not be required to avoid unwanted output
+}
+
+end print(total)
