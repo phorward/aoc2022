@@ -1,0 +1,15 @@
+begin {
+    overlaps = 0
+}
+
+afrom => Int '-' ato => Int ',' bfrom => Int '-' bto => Int {
+    if $bfrom >= $afrom && $bto <= $ato || $afrom >= $bfrom && $ato <= $bto {
+        overlaps++
+    }
+
+    accept
+}
+
+end {
+    print(overlaps)
+}
