@@ -1,0 +1,44 @@
+begin {
+    stacks = ()
+}
+
+# Parse one crate
+Crate : {
+    '   '          " "  # empty
+    '[' [A-Z] ']'  $2   # crate
+}
+
+# Parse crate row
+Crate (' ' Crate)+ '\n' {
+    if !$1 reject
+
+    crates = list($1) + $2
+
+    for i = 0; i < crates.len; i++ {
+        if stacks.len <= i {
+            stacks.push(())
+        }
+
+        if crates[i] != " " {
+            stacks[i].push(crates[i])
+        }
+    }
+
+    accept  # bug: This accept is needed to parse correctly, but shouldn't...
+}
+
+# Parse move operation
+'move' _ amount => Int _ 'from' _ from => Int _ 'to' _ to => Int '\n' {
+    loop $amount-- {
+        # crate = stacks[$from - 1].pop(0)  # solution for part 1
+        crate = stacks[$from - 1].pop($amount)  # solution for part 2
+        stacks[$to - 1].push(crate, 0)
+    }
+}
+
+end {
+    for i = 0; i < stacks.len; i++ {
+        res += stacks[i][0]
+    }
+    print(res)
+}
