@@ -1,0 +1,43 @@
+detect_len : 14  # change to 4 to resolve part 1
+
+# fixme: str_count() function required
+str_count : @s, ch {
+    count = 0
+
+    for i = 0; i < s.len; i++ {
+        if s[i] == ch count++
+    }
+
+    count
+}
+
+[a-z] {
+    if pos == -1 accept  # have recognized entry previously in this line
+
+    pos += 1
+    s += $1
+
+    if s.len == detect_len + 1 {
+        s = s.substr(1)
+    }
+
+    if s.len == detect_len {
+        # check if all characters are unique
+        for i = 0; i < s.len; i++ {
+            if str_count(s, s[i]) != 1 {
+                break
+            }
+        }
+
+        # this is a marker!
+        if i == s.len {
+            print(pos, s)
+            pos = -1
+        }
+    }
+}
+
+'\n' {
+    pos = 0
+    s = ""
+}
