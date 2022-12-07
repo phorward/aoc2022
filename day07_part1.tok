@@ -1,0 +1,36 @@
+_ : [ \t]+
+
+begin {
+    dirs = dict()
+    path = ()
+}
+
+'$' _ {
+    'cd' _ {
+        '/' path = ()
+        '..' {
+            cur = dirs["/".join(path)]
+            path.pop()
+            dirs["/".join(path)] += cur
+        }
+        dir => Ident {
+            path.push($dir)
+            dirs["/".join(path)] = 0
+        }
+    }
+    'ls'
+} _ '\n'
+
+'dir' _ Ident '\n'
+Int _ [\.A-Za-z]+ '\n' {
+    dirs["/".join(path)] += $1
+}
+
+end {
+    total = 0
+    values = dirs.values()
+    for i = 0; i < values.len; i++ {
+        if values[i] < 100000 total += values[i]
+    }
+    print(total)
+}

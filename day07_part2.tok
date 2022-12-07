@@ -1,0 +1,73 @@
+entire : 70000000
+needed : 30000000
+
+# fixme: str_count() function required
+str_count : @s, ch {
+    count = 0
+
+    for i = 0; i < s.len; i++ {
+        if s[i] == ch count++
+    }
+
+    count
+}
+
+#fixme: such a function must be built-in
+sort : @l {
+	for i = 0; i < l.len; i++ {
+		tmp = l[i]
+
+		for j = i + 1; j < l.len; j++ {
+			if tmp > l[j] {
+				l[i] = l[j]
+				l[j] = tmp
+				tmp = l[i]
+			}
+		}
+	}
+}
+
+_ : [ \t]+
+
+begin {
+    total = 0
+    dirs = dict()
+    path = ()
+}
+
+'$' _ {
+    'cd' _ {
+        '/' path = ()
+        '..' {
+            cur = dirs["/".join(path)]
+            path.pop()
+            dirs["/".join(path)] += cur
+        }
+        dir => Ident {
+            path.push($dir)
+            dirs["/".join(path)] = 0
+        }
+    }
+    'ls'
+} _ '\n'
+
+'dir' _ Ident '\n'
+Int _ [\.A-Za-z]+ '\n' {
+    dirs["/".join(path)] += $1
+    total += $1
+}
+
+end {
+    unused = entire - total
+    find = needed - unused
+
+    values = dirs.values()
+    sort(values)
+
+    for i = 0; i < values.len; i++ {
+        if values[i] >= find {
+            print(values[i])
+            break
+        }
+    }
+}
