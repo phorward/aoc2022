@@ -1,0 +1,110 @@
+begin {
+    forest = ()
+    dirs = (
+        (0, -1),  # left
+        (0, 1),   # right
+        (-1, 0),  # top
+        (1, 0),   # bottom
+    )
+}
+
+count_visible_trees : @{
+    visible = 0
+
+    for row = 0; row < forest.len(); row++ {
+        count = forest[row].len()  # bug: the len() is required!
+
+        for col = 0; col < count; col++ {
+            tree = int(forest[row][col])
+
+            for dir = 0; dir < dirs.len(); dir++ {
+                x = dirs[dir][0]
+                y = dirs[dir][1]
+
+                is_visible = true
+
+                for i = row + x; is_visible && i >= 0 && i < forest.len; i += x {
+                    for j = col + y; is_visible && j >= 0 && j < count; j += y {
+                        is_visible = tree > int(forest[i][j])
+
+                        if y == 0
+                            break
+                    }
+
+                    if x == 0
+                        break
+                }
+
+                if is_visible {
+                    #print("x", row + 1, "y", col + 1, "=>", tree "by", dir)
+                    visible++
+                    break
+                }
+            }
+        }
+    }
+
+    visible
+}
+
+find_highest_scenic_score : @{
+    hiscore = 0
+
+    for row = 0; row < forest.len(); row++ {
+        count = forest[row].len()  # bug: the len() is required!
+
+        for col = 0; col < count; col++ {
+            tree = int(forest[row][col])
+            score = 0
+
+            for dir = 0; dir < dirs.len(); dir++ {
+                x = dirs[dir][0]
+                y = dirs[dir][1]
+
+                is_visible = true
+                hops = 0
+
+                for i = row + x; is_visible && i >= 0 && i < forest.len; i += x {
+                    for j = col + y; is_visible && j >= 0 && j < count; j += y {
+                        is_visible = tree > int(forest[i][j])
+                        hops++
+
+                        if y == 0
+                            break
+                    }
+
+                    if x == 0
+                        break
+                }
+
+                #print(" x", row + 1, "y", col + 1, "@", dir "=>", tree "hops", hops)
+
+                # edge case, don't score
+                if !hops {
+                    score = 0
+                    break
+                }
+
+                if !score
+                    score = hops
+                else
+                    score *= hops
+            }
+
+            #print("x", row + 1, "y", col + 1, "=>", tree "score", score)
+
+            if score > hiscore {
+                hiscore = score
+            }
+        }
+    }
+
+    hiscore
+}
+
+[0-9]+ '\n'  forest.push($1)
+
+end {
+    #print(count_visible_trees)
+    print(find_highest_scenic_score)
+}
