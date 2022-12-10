@@ -1,0 +1,24 @@
+begin {
+    x = 1
+    cycles = (0, )
+    inspect = (20, 60, 100, 140, 180, 220)
+}
+
+'noop' cycles.push(0)
+'addx' _ Int cycles.push(0) cycles.push($3)
+
+end {
+    total = 0
+
+    for i = 0; i < cycles.len; i++ {
+        if i == inspect[0] {
+            print("==>", i, x, i * x)
+            total += i * x
+            inspect.pop(0)
+        }
+
+        x += cycles[i]
+    }
+
+    print(total)
+}

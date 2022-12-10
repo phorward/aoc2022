@@ -1,0 +1,26 @@
+begin {
+    x = 1
+    cycles = (0, )
+}
+
+'noop' cycles.push(0)
+'addx' _ Int cycles.push(0) cycles.push($3)
+
+end {
+    line = ""
+
+    for i = 0; i < cycles.len; i++ {
+        if float(i / 40).fract == 0.0 {
+            print(line)
+            line = ""
+        }
+
+        x += cycles[i]
+
+        pix = line.len()
+        if x == pix - 1 || x == pix || x == pix + 1
+            line += "#"
+        else
+            line += "."
+    }
+}
