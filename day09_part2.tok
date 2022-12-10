@@ -1,0 +1,66 @@
+begin {
+    # directions
+    dirs = (
+        U => (0, -1)
+        D => (0, 1)
+        R => (1, 0)
+        L => (-1, 0)
+    )
+
+    # variables
+    rope = ()
+    for i = 0; i < 10; i++ {
+        rope.push((0, 0))
+    }
+
+    visited = ("0-0" => true)
+}
+
+abs : @x {   # BUG: Missing abs() function
+    if x < 0
+        x * -1
+    else
+        x
+}
+
+dir => [UDLR] _ steps => Int {
+    #print("===" $dir $steps "===")  #BUG: When this print is missing, the program calculates wrong!
+
+    dir = dirs[$dir]
+
+    for step = 0; step < $steps; step++ {
+        for i = 0; i < rope.len; i++ {
+            if i == 0 {
+                rope[0][0] += dir[0]
+                rope[0][1] += dir[1]
+            }
+            else {
+                x = rope[i][0]
+                y = rope[i][1]
+
+                if abs(rope[i - 1][0] - x) == 2 && abs(rope[i - 1][1] - y) == 2 {
+                    x = int((rope[i - 1][0] + x) / 2)
+                    y = int((rope[i - 1][1] + y) / 2)
+                }
+                else if abs(rope[i - 1][0] - x) == 2 {
+                    x = int((rope[i - 1][0] + x) / 2)
+                    y = rope[i - 1][1]
+                }
+                else if abs(rope[i - 1][1] - y) == 2 {
+                    x = rope[i - 1][0]
+                    y = int((rope[i - 1][1] + y) / 2)
+                }
+
+                rope[i][0] = x
+                rope[i][1] = y
+            }
+        }
+
+        #print(i, rope)
+        visited[rope[i - 1][0] + "-" + rope[i - 1][1]] = true
+    }
+}
+
+end {
+    print(visited.keys().len)
+}

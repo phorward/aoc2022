@@ -1,0 +1,51 @@
+begin {
+    # directions
+    dirs = (
+        U => (0, -1)
+        D => (0, 1)
+        R => (1, 0)
+        L => (-1, 0)
+    )
+
+    # opposite directions
+    oppdirs = (
+        U => (0, 1)
+        D => (0, -1)
+        R => (-1, 0)
+        L => (1, 0)
+    )
+
+    # variables
+    h = (0, 0)
+    t = (0, 0)
+    visited = ("0-0" => true)
+}
+
+abs : @x {   # BUG: Missing abs() function
+    if x < 0
+        x * -1
+    else
+        x
+}
+
+dir => [UDLR] _ steps => Int {
+    print("===" $dir $steps "===")  #BUG: When this print is missing, the program calculates wrong!
+
+    dir = dirs[$dir]
+
+    for step = 0; step < $steps; step++ {
+        h[0] += dir[0]
+        h[1] += dir[1]
+
+        if abs(h[0] - t[0]) >= 2 || abs(h[1] - t[1]) >= 2 {
+            oppdir = oppdirs[$dir]
+            t[0] = h[0] + oppdir[0]
+            t[1] = h[1] + oppdir[1]
+            visited[t[0] + "-" + t[1]] = true
+        }
+    }
+}
+
+end {
+    print(visited.keys().len)
+}
