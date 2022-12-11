@@ -1,9 +1,12 @@
+rounds : 20  # part1
+rounds : 10000  # part2
+
 begin {
     monkeys = ()
 }
 
 # Runs one round
-run : @{
+run : @factor=3 {
     for i = 0; i < monkeys.len; i++ {
         print("Monkey " i)
         monkey = monkeys[i]
@@ -24,12 +27,15 @@ run : @{
                 print("    Worry level is increases by" x "to" item)
             }
 
-
-            item = int(item / 3)
-            print("    Monkey gets bored with item. Worry level is divided by 3 to" item)
+            #item = int(item / factor)  # part1
+            item = item % factor  # part2
+            print("    Monkey gets bored with item. Worry level is modulo by" factor "to" item)
 
             # Test
             test = float(item / monkey["test"]).fract == 0.0
+            #print("test1", item, "/", monkey["test"], item / monkey["test"], test)
+            test = int(item % monkey["test"]) == 0
+            #print("test2", item, "%", monkey["test"], item % monkey["test"], test)
             print("    Current worry level" if test "is" else "is not" "divisible by" monkey["test"])
 
             for t = 0; t < monkey["actions"].len; t++ {
@@ -107,10 +113,21 @@ Monkey+ {
     # BUG: Cannot run this in `end` by a unspecified behavior...
     print(monkeys.len "monkeys")
 
-    # Run 20 rounds
-    for r = 0; r < 20; r++ {
+    # part2: find Least Common Multiple
+    tests = ()
+    for i = 0; i < monkeys.len; i++ {
+        tests += monkeys[i]["test"]
+    }
+
+    prod = tests[0]
+    for i = 1; i < tests.len; i++ {
+        prod *= tests[i]
+    }
+
+    # Run rounds
+    for r = 0; r < rounds; r++ {
         print("ROUND" r + 1)
-        run()
+        run(prod)
         dump()
     }
 }
