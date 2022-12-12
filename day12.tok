@@ -1,0 +1,100 @@
+begin {
+    map = ()
+    dirs = (
+        "^" => (0, -1), # N
+        "V" => (0, 1),  # S
+        "<" => (-1, 0), # W
+        ">" => (1, 0),  # E
+    )
+    dirs = dirs.items()
+    s = null
+}
+
+AsciiAlphabetic+  {
+    for i = 0; i < $1.len; i++ {
+        if $1[i] == "S" s = (i, map.len)
+        else if $1[i] == "E" e = (i, map.len)
+    }
+
+    map.push($1)
+}
+
+dump : @path {
+    for y = 0; y < map.len; y++ {
+        l = "." * path.len + " "
+        for x = 0; x < map[y].len; x++ {
+            for i = path.len - 1; i >= 0; i-- {
+                if path[i][0] == x && path[i][1] == y {
+                    l += path[i][2]
+                    break
+                }
+            }
+
+            if i == -1 {
+                l += map[y][x]
+            }
+        }
+        print(l)
+    }
+}
+
+find : @path {
+    print(path.len)
+    cx = path[path.len - 1][0]
+    cy = path[path.len - 1][1]
+    cl = if map[cy][cx] == "S" ord("a") else ord(map[cy][cx])
+
+    r = null
+
+    for p = 0; p < dirs.len; p++ {
+        #print("." * path.len if p == 0 "N" else if p == 1 "S" else if p == 2 "W" else "E", cl)
+        pd = dirs[p][0]
+        px = cx + dirs[p][1][0]
+        py = cy + dirs[p][1][1]
+
+        if py >= 0 && py < map.len && px >= 0 && px < map[py].len {
+            # Check for E, but only when current level is "z"
+            if cl == ord("z") && map[py][px] == "E" {
+                r = path + ((px, py, "E"),)
+                print("*** GOAL ***")
+                print(r.len "steps")
+                #dump(r)
+
+                return r
+            }
+
+            # Check if not already in the path
+            for q = path.len - 1; q >= 0; q-- {
+                if path[q][0] == px && path[q][1] == py break
+            }
+
+            # Not in the path!
+            if q == -1 {
+                pl = ord(map[py][px])
+                #print("." * path.len "check" pl "against" cl)
+                if pl == cl || pl == cl + 1 {
+                    #print("." * path.len "find call")
+                    pr = find(path + ((px, py, pd),))
+                    #print("." * path.len " => " pr)
+                    if pr && (!r || r.len > pr.len) r = pr
+                }
+            }
+        }
+        void
+    }
+
+    return r
+}
+
+end {
+    print("s", s)
+    print("e", e)
+
+    path = find((s + "S", ))
+    if path == null {
+        print("No path detected!")
+    }
+    else {
+        print("Shortest path is" path.len - 1 "steps")
+    }
+}
