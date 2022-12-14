@@ -1,8 +1,9 @@
 # Requirements
 
-- `for...in` is definitely missing!
-- Rename `loop` back into `while` as it is more awk/c/python/rust-like.
-- Constant list or dict `x : (1, 2, 3)` cannot be defined (becomes a parselet)
+- Syntax
+  - `for...in` is definitely missing!
+  - Rename `loop` back into `while` as it is more awk/c/python/rust-like.
+  - Constant list or dict `x : (1, 2, 3)` cannot be defined (becomes a parselet)
 - `list`
   - I want to define a list named `list`
   - When I have a list `l = ()` and I do `l[0] = 1`, it should be like a push (currently `list_set_item() assignment index 0 beyond list sized 0`)
