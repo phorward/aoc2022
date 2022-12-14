@@ -1,0 +1,54 @@
+compare : @left, right, depth=0 {
+    if type(left) == "int" && type(right) == "int" {
+        return left - right
+    }
+
+    left = list(left)
+    right = list(right)
+
+    for l = 0; ; l++ {
+        if left.len == l || right.len == l break
+        if (res = compare(left[l], right[l], depth + 1)) != 0
+            return res
+    }
+
+    return left.len - right.len
+}
+
+count : @pack {
+    count = 1
+    for i = 0; i < lists.len; i++ {
+        if compare(pack, lists[i]) > 0
+            count++
+    }
+    count
+}
+
+begin {
+    lists = ()
+}
+
+ListItem : Int | List
+List : @{
+    '[' ']'  list()
+    '[' ListItem ']' ($2,)
+    '[' (ListItem ','?)+ ']'
+}
+
+List  lists.push($1)
+
+end {
+    # Part 1
+    sum = 0
+    for (i = 0, pair = 1); i < lists.len; (i += 2, pair++) {
+        cmp = compare(lists[i], lists[i+1])
+        if cmp < 0 {
+            sum += pair
+        }
+    }
+
+    print(sum)
+
+    # Part 2
+    print(count(((2, ), )) * (count(((6, ), )) + 1))
+}
