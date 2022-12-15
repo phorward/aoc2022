@@ -1,0 +1,137 @@
+dimX : 1000
+dimY : 1000
+
+begin {
+    walls = dict()
+    sands = dict()
+    maxy = 0
+}
+
+Coordinate : Int ',' Int
+
+Coordinate _ ('->' _ Coordinate _)* {
+    wall = ($1, )
+    wall += if type($3[0]) == "int" && type($3[1] == "int") ($3, ) else $3
+
+    lx = ly = null
+    for i = 0; i < wall.len; i++ {
+        x = wall[i][0]
+        y = wall[i][1]
+
+        if lx == null && ly == null {
+            lx = x
+            ly = y
+            i++ #bypass BUG #90
+            continue
+        }
+
+        # walls aren't diagonal - what a luck we have!
+        if lx == x {
+            if ly < y {
+                for j = ly; j <= y; j++ {
+                    walls[",".join((x, j))] = true
+                }
+            }
+            else {
+                for j = ly; j >= y; j-- {
+                    walls[",".join((x, j))] = true
+                }
+            }
+        }
+        else {
+            if lx < x {
+                for j = lx; j <= x; j++ {
+                    walls[",".join((j, y))] = true
+                }
+            }
+            else {
+                for j = lx; j >= x; j-- {
+                    walls[",".join((j, y))] = true
+                }
+            }
+        }
+
+        lx = x
+        ly = y
+
+        if maxy < y maxy = y
+    }
+}
+
+# Dumps the labyrinth or a part of it
+dump : @startx = 0, starty = 0, endx = dimX, endy = dimY {
+    for y = starty; y < endy; y++ {
+        line = ""
+        for x = startx; x < endx; x++ {
+            if x == 500 && y == 0 {
+                line += "+"
+            }
+            else {
+                coord = ",".join((x, y))
+                if walls[coord] line += "#"
+                else if sands[coord] line += "o"
+                else line += "."
+            }
+        }
+        print(line)
+    }
+}
+
+# Drops a sand unit into the labyrinth
+drop : @{
+    corn = (500, 0)
+
+    coord = ",".join((corn[0], corn[1]))
+    if walls[coord] || sands[coord] {
+        sands[",".join(corn)] = true
+        return
+    }
+
+    loop corn[1] < maxy {
+        coord = ",".join((corn[0], corn[1] + 1))
+        if walls[coord] || sands[coord] {
+            coord = ",".join((corn[0] - 1, corn[1] + 1))
+            if walls[coord] || sands[coord] {
+                coord = ",".join((corn[0] + 1, corn[1] + 1))
+                if walls[coord] || sands[coord] {
+                    break
+                }
+
+                corn = (corn[0] + 1, corn[1] + 1)
+                continue
+            }
+
+            corn = (corn[0] - 1, corn[1] + 1)
+            continue
+        }
+
+        corn = (corn[0], corn[1] + 1)
+    }
+
+    if corn[1] < maxy + 1 {
+        sands[",".join(corn)] = true
+        #print(corn)
+    }
+}
+
+end {
+    maxy += 1
+    #print(walls)
+    #dump(startx=490, endx=510, endy=maxy)
+    #dump(startx=400, endx=800, endy=maxy+2)
+
+    count = 0
+    loop {
+        drop()
+        #print(count, sands.len)
+        if sands.len == count break
+        count = sands.len()
+        #if count == 10000 break
+    }
+
+    #print()
+    #dump(startx=490, endx=510, endy=maxy)
+    #dump(startx=400, endx=800, endy=maxy+2)
+
+    print(count)  # 26729
+}

@@ -4,9 +4,14 @@
   - `for...in` is definitely missing!
   - Rename `loop` back into `while` as it is more awk/c/python/rust-like.
   - Constant list or dict `x : (1, 2, 3)` cannot be defined (becomes a parselet)
+- Sequences
+  - `+` and `*` operators should always return a list, as expected!
+  - `ast()` can optionally "flatten" and "clean-up" lists with only one entry
+  - `$*` could be a list of all sequence items
 - `list`
   - I want to define a list named `list`
   - When I have a list `l = ()` and I do `l[0] = 1`, it should be like a push (currently `list_set_item() assignment index 0 beyond list sized 0`)
+  - How can I construct a list of size X with a default value set?
   - Quick way to obtain last and first item
   - Slices would be useful in many ways
     - `sum((elfs[0],elfs[1],elfs[2]))` => `sum(elfs[..2])`
