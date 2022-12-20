@@ -1,17 +1,24 @@
-# Requirements
+# Wishlist
 
 - Syntax
   - `for...in` is definitely missing!
   - Rename `loop` back into `while` as it is more awk/c/python/rust-like.
   - Constant list or dict `x : (1, 2, 3)` cannot be defined (becomes a parselet)
+  - Instead of `l[1][2]`, maybe also `l[1, 2]` or even `l[1 2]`? This would continue the sequence syntax for indexing
+  - Alternative syntax for functions like `fn test(a, b, c=2) {}` should be considered
+    - The syntax is more straitforward
+    - Functions are never consuming
+- Semantics
+  - It is difficult to distinguish between locals and globals. There should be some kind of `global` keyword like in Python; When a globally known variable is used only, this should be no problem. When assigned, it becomes local. When explcit global assignment is wanted, the variable must be imported with `global`.
 - Sequences
   - `+` and `*` operators should always return a list, as expected!
   - `ast()` can optionally "flatten" and "clean-up" lists with only one entry
   - `$*` could be a list of all sequence items
 - `list`
-  - I want to define a list named `list`
+  - I want to define a list named `list`! Currently it overrides the list constructor. In Python, this problem exists as well, and makes Python ugly.
+  - Should have their own syntax `l = []`
   - When I have a list `l = ()` and I do `l[0] = 1`, it should be like a push (currently `list_set_item() assignment index 0 beyond list sized 0`)
-  - How can I construct a list of size X with a default value set?
+    - How can I construct a list of size X with a default value set?
   - Quick way to obtain last and first item
   - Slices would be useful in many ways
     - `sum((elfs[0],elfs[1],elfs[2]))` => `sum(elfs[..2])`
@@ -25,9 +32,9 @@
   - `max()`
   - `sum()`
 - `dict`
-  - I want to define a dict named `dict`
-  - Should have their own syntax `d = []`
-- `str`
+  - I want to define a dict named `dict`! Currently it overrides the dict constructor. In Python, this problem exists as well, and makes Python ugly.
+  - `d = ()` should be a dict creation!
+  - `str`
   - `count()`
   - `contains()` or `"substr" in s`
 - `int`/`float`
